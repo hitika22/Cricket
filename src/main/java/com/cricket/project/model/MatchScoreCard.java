@@ -1,8 +1,14 @@
 package com.cricket.project.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MatchScoreCard {
     private int matchId;
     private String winner;
