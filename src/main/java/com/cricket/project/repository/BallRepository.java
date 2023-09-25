@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class BallRepository {
     private final MongoTemplate mongoTemplate;
@@ -25,7 +27,7 @@ public class BallRepository {
     {
         mongoTemplate.save(ball);
     }
-    public int wickets(int matchId,int battingTeamId)
+    public int inningWickets(int matchId,int battingTeamId)
     {
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.match(
@@ -114,15 +116,6 @@ public class BallRepository {
         return 0;
     }
 
-
 }
 
 
-//    player runs scored 0
-//        wicket taken 5
-//        InningStats(matchId=2, battingTeamId=2, inningNumber=1, runs=208, wickets=5)
-//        InningStats(matchId=2, battingTeamId=1, inningNumber=2, runs=212, wickets=7)
-//        winner 1
-
-//    player runs scored 34
-//        wicket taken 0

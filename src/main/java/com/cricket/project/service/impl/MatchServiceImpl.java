@@ -2,9 +2,7 @@ package com.cricket.project.service.impl;
 
 import com.cricket.project.dto.MatchDto;
 import com.cricket.project.model.*;
-import com.cricket.project.repository.BallRepository;
-import com.cricket.project.repository.PlayerRepository;
-import com.cricket.project.repository.TeamRepository;
+import com.cricket.project.repository.*;
 import com.cricket.project.service.MatchService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,10 +30,19 @@ public class MatchServiceImpl implements MatchService {
     private BallRepository ballRepository;
     @Autowired
     private InningServiceImpl inningService;
+    @Autowired
+    private MatchRepository matchRepository;
+    @Autowired
+    private InningRepository inningRepository;
 
     @Override
     public Match setUpMatch(MatchDto document) {
         Match match = Toss(document);
+        List<Integer> team1PlayerIds = teamRepository.findTeamById(document.getTeam1Id()).getTeamPlayersId();
+        List<Integer> team2PlayerIds = teamRepository.findTeamById(document.getTeam2Id()).getTeamPlayersId();
+        match.setTeam1PlayersId(team1PlayerIds);
+        match.setTeam2PlayersId(team2PlayerIds);
+        matchRepository.save(match);
         playMatch(match);
         return match;
     }
@@ -63,6 +70,7 @@ public class MatchServiceImpl implements MatchService {
                 battingFirstTeamId = document.getTeam2Id();
                 break;
         }
+
         return Match.builder()
                 .id(document.getId())
                 .date(new Date())
@@ -82,7 +90,7 @@ public class MatchServiceImpl implements MatchService {
         BatAndBallOrder batAndBallOrder = battingAndBowlingTeamOrder(match);
         int firstInningScore = inningService.playInning(match, batAndBallOrder.getFirstInningBattingOrder(), batAndBallOrder
                 .getFirstInningBowlingOrder(), batAndBallOrder.getFirstInningBattingTeamId(), 9999);
-        int wickets1 = ballRepository.wickets(match.getId(),batAndBallOrder.getFirstInningBattingTeamId());
+        int wickets1 = ballRepository.inningWickets(match.getId(),batAndBallOrder.getFirstInningBattingTeamId());
 
         inningStats1=InningStats.builder()
                 .matchId(match.getId())
@@ -93,10 +101,11 @@ public class MatchServiceImpl implements MatchService {
                 .build();
 
         System.out.println(inningStats1);
+        inningRepository.saveInning(inningStats1);
 
         int secondInningScore = inningService.playInning(match, batAndBallOrder.getSecondInningBattingOrder(), batAndBallOrder
                 .getSecondInningBowlingOrder(), batAndBallOrder.getSecondInningBattingTeamId(), firstInningScore);
-        int wickets2 = ballRepository.wickets(match.getId(),batAndBallOrder.getSecondInningBattingTeamId());
+        int wickets2 = ballRepository.inningWickets(match.getId(),batAndBallOrder.getSecondInningBattingTeamId());
 
         inningStats2 = InningStats.builder()
                 .matchId(match.getId())
@@ -106,6 +115,7 @@ public class MatchServiceImpl implements MatchService {
                 .wickets(wickets2)
                 .build();
         System.out.println(inningStats2);
+        inningRepository.saveInning(inningStats2);
         if(inningStats1.getRuns()>inningStats2.getRuns())
         {
             System.out.println("winner "+ inningStats1.getBattingTeamId());
@@ -125,9 +135,10 @@ public class MatchServiceImpl implements MatchService {
         BattingAndBallingTeam battingAndBallingTeam = decideBatOrBallTeam(match);
 
         firstInningBattingOrder = orderBuilder(battingAndBallingTeam.getBattingTeamPlayers(), "batting");
-        secondInningBowlingOrder = orderBuilder(battingAndBallingTeam.getBowlingTeamPlayers(), "bowler");
+        secondInningBowlingOrder = orderBuilder(battingAndBallingTeam.getBattingTeamPlayers(), "bowling");
         firstInningBowlingOrder = orderBuilder(battingAndBallingTeam.getBowlingTeamPlayers(), "bowling");
-        secondInningBattingOrder = orderBuilder(battingAndBallingTeam.getBattingTeamPlayers(), "batting");
+        secondInningBattingOrder = orderBuilder(battingAndBallingTeam.getBowlingTeamPlayers(), "batting");
+
 
         return BatAndBallOrder.builder()
                 .firstInningBattingOrder(firstInningBattingOrder)

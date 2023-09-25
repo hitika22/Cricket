@@ -35,9 +35,6 @@ public class PlayerRepository{
         return mongoTemplate.find(query, Player.class);
     }
 
-    public void insertPlayer(Player player) {
-        mongoTemplate.insert(player);
-    }
 
     public String removePlayer(int id) {
         Query query = new Query(Criteria.where("id").is(id));
@@ -81,6 +78,7 @@ public class PlayerRepository{
         Query query = new Query(criteria);
         return mongoTemplate.find(query, Player.class);
     }
+
 
 
 

@@ -25,6 +25,8 @@ public class InningServiceImpl implements InningService {
 
     Player striker;
     Player nonStriker;
+
+
     public int playInning(Match match, List<Player> battingOrder, List<Player> bowlingOrder, int battingTeamId, int targetScore) {
         int inningScore = 0;
         int wickets = 0;
@@ -51,6 +53,10 @@ public class InningServiceImpl implements InningService {
                     if (ballStatus % 2 == 1) {
                         swapStrikers(striker, nonStriker);
                     }
+                }
+                if(ballStatus==7)
+                {
+                    ballStatus=0;
                 }
                 inningScore += ballStatus;
                 if (inningScore > targetScore) {

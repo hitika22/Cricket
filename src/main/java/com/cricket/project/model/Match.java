@@ -1,10 +1,13 @@
 package com.cricket.project.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.Date;
+import java.util.List;
 
 
 @Data
@@ -17,8 +20,11 @@ public class Match {
     private Date date;
     private int team1Id;
     private int team2Id;
+    List<Integer> team1PlayersId;
+    List<Integer> team2PlayersId;
     private String matchVenue;
     private int overs;
     private int tossWinningTeamId;
     private int battingFirstTeamId;
+
 }

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,6 +19,7 @@ public class MatchScoreCard {
     private int team2Runs;
     private int team2Wickets;
     private int totalOvers;
-    private String bestPartnerShipInWinningTeam;
-    private int winningTeamWonBy;
+    private List<PlayerScoreCard> team1PlayerScoreCard;
+    private List<PlayerScoreCard> team2PlayerScoreCard;
+
 }

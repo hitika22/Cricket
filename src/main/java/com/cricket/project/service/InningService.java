@@ -1,5 +1,6 @@
 package com.cricket.project.service;
 
+import com.cricket.project.model.InningStats;
 import com.cricket.project.model.Match;
 import com.cricket.project.model.Player;
 
