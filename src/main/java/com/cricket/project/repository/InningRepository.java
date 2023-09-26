@@ -1,8 +1,6 @@
 package com.cricket.project.repository;
 
 import com.cricket.project.model.InningStats;
-import com.cricket.project.model.Match;
-import com.cricket.project.model.Team;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -16,8 +14,8 @@ public class InningRepository {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public InningStats saveInning(InningStats inningStats) {
-        return mongoTemplate.save(inningStats);
+    public void saveInning(InningStats inningStats) {
+        mongoTemplate.save(inningStats);
     }
 
     public InningStats findInningByMatchId(int matchId,int battingTeamId)
