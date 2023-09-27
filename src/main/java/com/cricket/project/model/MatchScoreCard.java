@@ -21,5 +21,4 @@ public class MatchScoreCard {
     private int totalOvers;
     private List<PlayerScoreCard> team1PlayerScoreCard;
     private List<PlayerScoreCard> team2PlayerScoreCard;
-
 }

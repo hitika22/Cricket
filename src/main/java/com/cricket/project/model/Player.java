@@ -2,17 +2,18 @@ package com.cricket.project.model;
 
 
 import com.cricket.project.enums.PlayerType;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Entity
-@Document("player")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Document
 public class Player {
     @Id
     private int id;
@@ -22,6 +23,4 @@ public class Player {
     private int totalRunScored;
     private int totalWicketsTaken;
     private int totalMatchesPlayed;
-
-
 }

@@ -13,9 +13,27 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(TeamException.class)
-    public ResponseEntity<ErrorMessage> teamLimitExceed(TeamException teamLimitExceededException, WebRequest webRequest)
+    public ResponseEntity<ErrorMessage> teamException(TeamException teamException, WebRequest webRequest)
     {
-        ErrorMessage errorMessage = new ErrorMessage(HttpStatus.FORBIDDEN,teamLimitExceededException.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorMessage);
+        String errorMessageText = teamException.getMessage();
+        HttpStatus status;
+
+        if (errorMessageText.contains("Max 2 teams allowed!")) {
+            status = HttpStatus.FORBIDDEN;
+        } else if (errorMessageText.contains("Player Already In Team") || errorMessageText.contains("Team Already Has 11 Players")) {
+            status = HttpStatus.CONFLICT;
+        } else {
+           status = HttpStatus.NOT_FOUND;
+        }
+
+        ErrorMessage errorMessage = new ErrorMessage(status, errorMessageText);
+        return ResponseEntity.status(status).body(errorMessage);
+    }
+
+    @ExceptionHandler(PlayerException.class)
+    public ResponseEntity<ErrorMessage> playerException(PlayerException playerException, WebRequest webRequest)
+    {
+        ErrorMessage errorMessage = new ErrorMessage(HttpStatus.NOT_FOUND,playerException.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
     }
 }

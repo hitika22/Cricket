@@ -1,15 +1,17 @@
 package com.cricket.project.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Document
 public class Team {
     @Id
     private int id;
@@ -23,5 +25,4 @@ public class Team {
     private int totalWins;
     @Getter
     private int totalMatchesPlayed;
-
 }

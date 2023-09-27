@@ -53,12 +53,11 @@ public class PlayerRepository{
     public List<Player> findListOfPlayersById(List<Integer> playerIds) {
 
         AggregationOperation customSort = context -> {
-            // Use the $switch operator for custom sorting
             return context.getMappedObject(
                     Document.parse("{$addFields: { sortPriority: {$switch: { branches: ["
-                            + "{ case: {$eq: ['$playerType', 'batsman']}, then: 3 },"
-                            + "{ case: {$eq: ['$playerType', 'allRounder']}, then: 2 },"
-                            + "{ case: {$eq: ['$playerType', 'bowler']}, then: 1 }], default: 0 } } } }")
+                            + "{ case: {$eq: ['$playerType', 'BATSMAN']}, then: 3 },"
+                            + "{ case: {$eq: ['$playerType', 'ALLROUNDER']}, then: 2 },"
+                            + "{ case: {$eq: ['$playerType', 'BOWLER']}, then: 1 }], default: 0 } } } }")
             );
         };
 
@@ -72,15 +71,9 @@ public class PlayerRepository{
     }
 
     public List<Player> findListOfBowlersById(List<Integer> playerIds) {
-        Criteria criteria = Criteria.where("playerType").is("bowler")
+        Criteria criteria = Criteria.where("playerType").is("BOWLER")
                 .and("id").in(playerIds); // Add a condition to check if the ID is in the provided list.
-
         Query query = new Query(criteria);
         return mongoTemplate.find(query, Player.class);
     }
-
-
-
-
-
 }

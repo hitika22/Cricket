@@ -23,8 +23,7 @@ public class BallRepository {
         private int result;
     }
 
-    public void save(Ball ball)
-    {
+    public void save(Ball ball) {
         mongoTemplate.save(ball);
     }
     public int inningWickets(int matchId,int battingTeamId)

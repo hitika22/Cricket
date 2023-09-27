@@ -31,7 +31,7 @@ public class TeamServiceImpl implements TeamService {
     public Team createTeam(Map<String,String> teamName) throws TeamException {
         count++;
         if (count >= 3) {
-            throw new TeamException("Cannot create more than 2 teams!");
+            throw new TeamException("Max 2 teams allowed!");
         }
         List<Integer> playersInTeam = setPlayersInTeam();
 
@@ -51,9 +51,9 @@ public class TeamServiceImpl implements TeamService {
 
     public List<Integer> setPlayersInTeam()
     {
-        List<Player> bowlers = playerRepository.findPlayersByPlayerType(PlayerType.valueOf("bowler"));
-        List<Player> batsmen = playerRepository.findPlayersByPlayerType(PlayerType.valueOf("batsman"));
-        List<Player> allRounders = playerRepository.findPlayersByPlayerType(PlayerType.valueOf("allRounder"));
+        List<Player> bowlers = playerRepository.findPlayersByPlayerType(PlayerType.valueOf("BOWLER"));
+        List<Player> batsmen = playerRepository.findPlayersByPlayerType(PlayerType.valueOf("BATSMAN"));
+        List<Player> allRounders = playerRepository.findPlayersByPlayerType(PlayerType.valueOf("ALLROUNDER"));
         List<Integer> playersInTeam = new ArrayList<>();
 
         int numberOfBowlers = 4;
@@ -85,11 +85,11 @@ public class TeamServiceImpl implements TeamService {
         List<Integer> playerIds = team.getTeamPlayersId();
         if(playerIds.contains(playerId))
         {
-            throw new TeamException("Player Already Exists In Team");
+            throw new TeamException("Player Already In Team");
         }
         if(playerIds.size()==11)
         {
-            throw new TeamException("Team Already Have 11 Players!! Can't Add More");
+            throw new TeamException("Team Already Has 11 Players");
         }
         playerIds.add(playerId);
         team.setTeamPlayersId(playerIds);
@@ -103,10 +103,10 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamRepository.findTeamById(teamId);
         List<Integer> playerIds = team.getTeamPlayersId();
         if (playerIds.isEmpty()) {
-            throw new TeamException("Team is empty!");
+            throw new TeamException("Team is empty");
         }
         if (!playerIds.contains(playerId)) {
-            throw new TeamException("Team does not contain this player! So cannot remove this player..");
+            throw new TeamException("Player not found in the team");
         }
         playerIds.removeIf(id -> id == playerId);
         team.setTeamPlayersId(playerIds);

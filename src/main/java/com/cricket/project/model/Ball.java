@@ -1,19 +1,22 @@
 package com.cricket.project.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @CompoundIndexes({
         @CompoundIndex(name = "match_inning_ball", def = "{'matchId': 1, 'battingTeamId': 1, 'ballId': 1}", unique = true)
 })
+@Document
 public class Ball {
-    @Id
-    private String id; // Use a unique identifier field, typically of type ObjectId
     private int matchId;
     private int battingTeamId;
     private int ballId;

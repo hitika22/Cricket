@@ -36,10 +36,10 @@ public class MatchServiceImpl implements MatchService {
     private InningRepository inningRepository;
 
     @Override
-    public Match setUpMatch(MatchDto document) {
-        Match match = Toss(document);
-        List<Integer> team1PlayerIds = teamRepository.findTeamById(document.getTeam1Id()).getTeamPlayersId();
-        List<Integer> team2PlayerIds = teamRepository.findTeamById(document.getTeam2Id()).getTeamPlayersId();
+    public Match setUpMatch(MatchDto matchDto) {
+        Match match = Toss(matchDto);
+        List<Integer> team1PlayerIds = teamRepository.findTeamById(matchDto.getTeam1Id()).getTeamPlayersId();
+        List<Integer> team2PlayerIds = teamRepository.findTeamById(matchDto.getTeam2Id()).getTeamPlayersId();
         match.setTeam1PlayersId(team1PlayerIds);
         match.setTeam2PlayersId(team2PlayerIds);
         matchRepository.save(match);
@@ -47,82 +47,67 @@ public class MatchServiceImpl implements MatchService {
         return match;
     }
 
-    public Match Toss(MatchDto document) {
+    public Match Toss(MatchDto matchDto) {
         Random random = new Random();
         int toss = random.nextInt(4);
         int tossWinningTeamId = 0;
         int battingFirstTeamId = 0;
         switch (toss) {
             case 0:
-                tossWinningTeamId = document.getTeam1Id();
-                battingFirstTeamId = document.getTeam1Id();
+                tossWinningTeamId = matchDto.getTeam1Id();
+                battingFirstTeamId = matchDto.getTeam1Id();
                 break;
             case 1:
-                tossWinningTeamId = document.getTeam1Id();
-                battingFirstTeamId = document.getTeam2Id();
+                tossWinningTeamId = matchDto.getTeam1Id();
+                battingFirstTeamId = matchDto.getTeam2Id();
                 break;
             case 2:
-                tossWinningTeamId = document.getTeam2Id();
-                battingFirstTeamId = document.getTeam1Id();
+                tossWinningTeamId = matchDto.getTeam2Id();
+                battingFirstTeamId = matchDto.getTeam1Id();
                 break;
             case 3:
-                tossWinningTeamId = document.getTeam2Id();
-                battingFirstTeamId = document.getTeam2Id();
+                tossWinningTeamId = matchDto.getTeam2Id();
+                battingFirstTeamId = matchDto.getTeam2Id();
                 break;
         }
 
         return Match.builder()
-                .id(document.getId())
+                .id(matchDto.getId())
                 .date(new Date())
-                .team1Id(document.getTeam1Id())
-                .team2Id(document.getTeam2Id())
-                .matchVenue(document.getMatchVenue())
-                .overs(document.getOvers())
+                .team1Id(matchDto.getTeam1Id())
+                .team2Id(matchDto.getTeam2Id())
+                .matchVenue(matchDto.getMatchVenue())
+                .overs(matchDto.getOvers())
                 .tossWinningTeamId(tossWinningTeamId)
                 .battingFirstTeamId(battingFirstTeamId)
                 .build();
     }
 
     public void playMatch(Match match) {
-
-        InningStats inningStats1;
-        InningStats inningStats2;
         BatAndBallOrder batAndBallOrder = battingAndBowlingTeamOrder(match);
-        int firstInningScore = inningService.playInning(match, batAndBallOrder.getFirstInningBattingOrder(), batAndBallOrder
-                .getFirstInningBowlingOrder(), batAndBallOrder.getFirstInningBattingTeamId(), 9999);
-        int wickets1 = ballRepository.inningWickets(match.getId(),batAndBallOrder.getFirstInningBattingTeamId());
-
-        inningStats1=InningStats.builder()
-                .matchId(match.getId())
-                .battingTeamId(batAndBallOrder.getFirstInningBattingTeamId())
-                .inningNumber(1)
-                .runs(firstInningScore)
-                .wickets(wickets1)
-                .build();
-
-        System.out.println(inningStats1);
+        int firstInningScore = playInning(match, batAndBallOrder, 1);
+        InningStats inningStats1 = createInningStats(match.getId(), batAndBallOrder.getFirstInningBattingTeamId(), 1, firstInningScore);
         inningRepository.saveInning(inningStats1);
-
-        int secondInningScore = inningService.playInning(match, batAndBallOrder.getSecondInningBattingOrder(), batAndBallOrder
-                .getSecondInningBowlingOrder(), batAndBallOrder.getSecondInningBattingTeamId(), firstInningScore);
-        int wickets2 = ballRepository.inningWickets(match.getId(),batAndBallOrder.getSecondInningBattingTeamId());
-
-        inningStats2 = InningStats.builder()
-                .matchId(match.getId())
-                .battingTeamId(batAndBallOrder.getSecondInningBattingTeamId())
-                .inningNumber(2)
-                .runs(secondInningScore)
-                .wickets(wickets2)
-                .build();
-        System.out.println(inningStats2);
+        int secondInningScore = playInning(match, batAndBallOrder, 2);
+        InningStats inningStats2 = createInningStats(match.getId(), batAndBallOrder.getSecondInningBattingTeamId(), 2, secondInningScore);
         inningRepository.saveInning(inningStats2);
-        if(inningStats1.getRuns()>inningStats2.getRuns())
-        {
-            System.out.println("winner "+ inningStats1.getBattingTeamId());
-        }
-        else {
-            System.out.println("winner "+ inningStats2.getBattingTeamId());
-        }
+    }
+    public int playInning(Match match, BatAndBallOrder batAndBallOrder, int inningNumber) {
+        List<Player> battingOrder = inningNumber == 1 ? batAndBallOrder.getFirstInningBattingOrder() : batAndBallOrder.getSecondInningBattingOrder();
+        List<Player> bowlingOrder = inningNumber == 1 ? batAndBallOrder.getFirstInningBowlingOrder() : batAndBallOrder.getSecondInningBowlingOrder();
+        int battingTeamId = inningNumber == 1 ? batAndBallOrder.getFirstInningBattingTeamId() : batAndBallOrder.getSecondInningBattingTeamId();
+        return inningService.playInning(match, battingOrder, bowlingOrder, battingTeamId, 9999);
+    }
+
+    public InningStats createInningStats(int matchId, int battingTeamId, int inningNumber, int runs) {
+        int wickets = ballRepository.inningWickets(matchId, battingTeamId);
+        return InningStats.builder()
+                .matchId(matchId)
+                .battingTeamId(battingTeamId)
+                .inningNumber(inningNumber)
+                .runs(runs)
+                .wickets(wickets)
+                .build();
     }
 
     public BatAndBallOrder battingAndBowlingTeamOrder(Match match) {
@@ -131,14 +116,12 @@ public class MatchServiceImpl implements MatchService {
         List<Player> secondInningBattingOrder;
         List<Player> secondInningBowlingOrder;
 
-
         BattingAndBallingTeam battingAndBallingTeam = decideBatOrBallTeam(match);
 
         firstInningBattingOrder = orderBuilder(battingAndBallingTeam.getBattingTeamPlayers(), "batting");
         secondInningBowlingOrder = orderBuilder(battingAndBallingTeam.getBattingTeamPlayers(), "bowling");
         firstInningBowlingOrder = orderBuilder(battingAndBallingTeam.getBowlingTeamPlayers(), "bowling");
         secondInningBattingOrder = orderBuilder(battingAndBallingTeam.getBowlingTeamPlayers(), "batting");
-
 
         return BatAndBallOrder.builder()
                 .firstInningBattingOrder(firstInningBattingOrder)
@@ -174,7 +157,6 @@ public class MatchServiceImpl implements MatchService {
                 .secondInningBattingTeamId(secondInningBattingTeamId)
                 .battingTeamPlayers(battingTeamPlayers)
                 .bowlingTeamPlayers(bowlingTeamPlayers).build();
-
     }
 
     public List<Player> orderBuilder(List<Integer> teamPlayers, String batOrBall) {
@@ -186,6 +168,5 @@ public class MatchServiceImpl implements MatchService {
         }
         return players;
     }
-
 
 }

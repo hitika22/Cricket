@@ -31,7 +31,6 @@ public class ScoreCardServiceImpl implements ScoreCardService {
         int numberOf6 = ballRepository.playerNumberOf6(matchId,playerId);
         PlayerType playerType = playerRepository.findPlayerById(playerId).getPlayerType();
 
-
         return PlayerScoreCard.builder()
                 .id(playerId)
                 .name(playerName)
