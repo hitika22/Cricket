@@ -1,7 +1,7 @@
 package com.cricket.project.controller;
 
 import com.cricket.project.model.Team;
-import com.cricket.project.service.impl.TeamServiceImpl;
+import com.cricket.project.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import java.util.Map;
 public class TeamController {
 
     @Autowired
-    private TeamServiceImpl teamService;
+    private TeamService teamService;
 
     @PostMapping
     public ResponseEntity<Team> createTeam(@RequestBody Map<String, String> teamName) {

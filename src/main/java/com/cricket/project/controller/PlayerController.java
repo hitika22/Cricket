@@ -3,8 +3,8 @@ package com.cricket.project.controller;
 import com.cricket.project.exception.PlayerException;
 import com.cricket.project.model.Player;
 import com.cricket.project.model.PlayerScoreCard;
-import com.cricket.project.service.impl.PlayerServiceImpl;
-import com.cricket.project.service.impl.ScoreCardServiceImpl;
+import com.cricket.project.service.PlayerService;
+import com.cricket.project.service.ScoreCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +17,10 @@ import java.util.List;
 public class PlayerController {
 
     @Autowired
-    private PlayerServiceImpl playerService;
+    private PlayerService playerService;
 
     @Autowired
-    private ScoreCardServiceImpl scoreCardService;
+    private ScoreCardService scoreCardService;
 
     @PostMapping
     public ResponseEntity<String> addPlayer(@RequestBody Player player) {

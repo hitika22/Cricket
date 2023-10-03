@@ -36,9 +36,9 @@ public class MatchServiceImpl implements MatchService {
         List<Integer> team2PlayerIds = teamRepository.findTeamById(matchDto.getTeam2Id()).getTeamPlayersId();
         match.setTeam1PlayersId(team1PlayerIds);
         match.setTeam2PlayersId(team2PlayerIds);
-        matchRepository.save(match);
+        Match savedMatch = matchRepository.save(match);
         playMatch(match);
-        return match;
+        return savedMatch;
     }
 
     public Match Toss(MatchDto matchDto) {
