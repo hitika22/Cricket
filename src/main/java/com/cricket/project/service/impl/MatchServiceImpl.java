@@ -4,9 +4,6 @@ import com.cricket.project.dto.MatchDto;
 import com.cricket.project.model.*;
 import com.cricket.project.repository.*;
 import com.cricket.project.service.MatchService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +13,6 @@ import java.util.Objects;
 import java.util.Random;
 
 @Service
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class MatchServiceImpl implements MatchService {
     @Autowired
     private TeamServiceImpl teamService;
@@ -71,16 +65,7 @@ public class MatchServiceImpl implements MatchService {
                 break;
         }
 
-        return Match.builder()
-                .id(matchDto.getId())
-                .date(new Date())
-                .team1Id(matchDto.getTeam1Id())
-                .team2Id(matchDto.getTeam2Id())
-                .matchVenue(matchDto.getMatchVenue())
-                .overs(matchDto.getOvers())
-                .tossWinningTeamId(tossWinningTeamId)
-                .battingFirstTeamId(battingFirstTeamId)
-                .build();
+        return Match.builder().id(matchDto.getId()).date(new Date()).team1Id(matchDto.getTeam1Id()).team2Id(matchDto.getTeam2Id()).matchVenue(matchDto.getMatchVenue()).overs(matchDto.getOvers()).tossWinningTeamId(tossWinningTeamId).battingFirstTeamId(battingFirstTeamId).build();
     }
 
     public void playMatch(Match match) {
@@ -92,6 +77,7 @@ public class MatchServiceImpl implements MatchService {
         InningStats inningStats2 = createInningStats(match.getId(), batAndBallOrder.getSecondInningBattingTeamId(), 2, secondInningScore);
         inningRepository.saveInning(inningStats2);
     }
+
     public int playInning(Match match, BatAndBallOrder batAndBallOrder, int inningNumber) {
         List<Player> battingOrder = inningNumber == 1 ? batAndBallOrder.getFirstInningBattingOrder() : batAndBallOrder.getSecondInningBattingOrder();
         List<Player> bowlingOrder = inningNumber == 1 ? batAndBallOrder.getFirstInningBowlingOrder() : batAndBallOrder.getSecondInningBowlingOrder();
@@ -101,13 +87,7 @@ public class MatchServiceImpl implements MatchService {
 
     public InningStats createInningStats(int matchId, int battingTeamId, int inningNumber, int runs) {
         int wickets = ballRepository.inningWickets(matchId, battingTeamId);
-        return InningStats.builder()
-                .matchId(matchId)
-                .battingTeamId(battingTeamId)
-                .inningNumber(inningNumber)
-                .runs(runs)
-                .wickets(wickets)
-                .build();
+        return InningStats.builder().matchId(matchId).battingTeamId(battingTeamId).inningNumber(inningNumber).runs(runs).wickets(wickets).build();
     }
 
     public BatAndBallOrder battingAndBowlingTeamOrder(Match match) {
@@ -123,14 +103,7 @@ public class MatchServiceImpl implements MatchService {
         firstInningBowlingOrder = orderBuilder(battingAndBallingTeam.getBowlingTeamPlayers(), "bowling");
         secondInningBattingOrder = orderBuilder(battingAndBallingTeam.getBowlingTeamPlayers(), "batting");
 
-        return BatAndBallOrder.builder()
-                .firstInningBattingOrder(firstInningBattingOrder)
-                .firstInningBowlingOrder(firstInningBowlingOrder)
-                .secondInningBattingOrder(secondInningBattingOrder)
-                .secondInningBowlingOrder(secondInningBowlingOrder)
-                .firstInningBattingTeamId(battingAndBallingTeam.getFirstInningBattingTeamId())
-                .secondInningBattingTeamId(battingAndBallingTeam.getSecondInningBattingTeamId())
-                .build();
+        return BatAndBallOrder.builder().firstInningBattingOrder(firstInningBattingOrder).firstInningBowlingOrder(firstInningBowlingOrder).secondInningBattingOrder(secondInningBattingOrder).secondInningBowlingOrder(secondInningBowlingOrder).firstInningBattingTeamId(battingAndBallingTeam.getFirstInningBattingTeamId()).secondInningBattingTeamId(battingAndBallingTeam.getSecondInningBattingTeamId()).build();
     }
 
     public BattingAndBallingTeam decideBatOrBallTeam(Match match) {
@@ -152,11 +125,7 @@ public class MatchServiceImpl implements MatchService {
         }
         bowlingTeamPlayers = bowlingTeam.getTeamPlayersId();
 
-        return BattingAndBallingTeam.builder()
-                .firstInningBattingTeamId(firstInningBattingTeamId)
-                .secondInningBattingTeamId(secondInningBattingTeamId)
-                .battingTeamPlayers(battingTeamPlayers)
-                .bowlingTeamPlayers(bowlingTeamPlayers).build();
+        return BattingAndBallingTeam.builder().firstInningBattingTeamId(firstInningBattingTeamId).secondInningBattingTeamId(secondInningBattingTeamId).battingTeamPlayers(battingTeamPlayers).bowlingTeamPlayers(bowlingTeamPlayers).build();
     }
 
     public List<Player> orderBuilder(List<Integer> teamPlayers, String batOrBall) {

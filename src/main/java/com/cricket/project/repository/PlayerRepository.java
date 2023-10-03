@@ -5,32 +5,32 @@ import com.cricket.project.model.Player;
 import org.bson.Document;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 @Repository
-public class PlayerRepository{
+public class PlayerRepository {
 
-    private MongoTemplate mongoTemplate;
-    PlayerRepository(MongoTemplate mongoTemplate){
-        this.mongoTemplate=mongoTemplate;
+    private final MongoTemplate mongoTemplate;
+
+    PlayerRepository(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
     }
-    public Player findPlayerById(int id)
-    {
+
+    public Player findPlayerById(int id) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(id));
-        return mongoTemplate.findOne(query,Player.class);
+        return mongoTemplate.findOne(query, Player.class);
     }
 
-    public List<Player> findAllPlayers()
-    {
+    public List<Player> findAllPlayers() {
         Query query = new Query();
         return mongoTemplate.find(query, Player.class);
     }
@@ -41,6 +41,7 @@ public class PlayerRepository{
         mongoTemplate.remove(query, Player.class);
         return "Player Removed Successfully!!";
     }
+
     public void savePlayer(Player player) {
         mongoTemplate.save(player);
     }

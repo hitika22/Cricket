@@ -6,9 +6,6 @@ import com.cricket.project.model.Player;
 import com.cricket.project.repository.BallRepository;
 import com.cricket.project.repository.PlayerRepository;
 import com.cricket.project.service.InningService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +13,6 @@ import java.util.List;
 import java.util.Random;
 
 @Service
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class InningServiceImpl implements InningService {
     @Autowired
     private PlayerRepository playerRepository;
@@ -36,7 +30,7 @@ public class InningServiceImpl implements InningService {
         for (int i = 0; i < match.getOvers(); i++) {
             Player bowler = getBowlerForOver(bowlingOrder, i);
             for (int j = 1; j <= 6; j++) {
-                Ball ball = playBall((i*6+j),match.getId(), bowler.getId(), battingTeamId, striker, nonStriker);
+                Ball ball = playBall((i * 6 + j), match.getId(), bowler.getId(), battingTeamId, striker, nonStriker);
 
                 int ballStatus = generateRandomBallStatus();
                 ball.setRuns(ballStatus);
@@ -54,9 +48,8 @@ public class InningServiceImpl implements InningService {
                         swapStrikers(striker, nonStriker);
                     }
                 }
-                if(ballStatus==7)
-                {
-                    ballStatus=0;
+                if (ballStatus == 7) {
+                    ballStatus = 0;
                 }
                 inningScore += ballStatus;
                 if (inningScore > targetScore) {
@@ -72,15 +65,8 @@ public class InningServiceImpl implements InningService {
         return bowlingOrder.get(over % bowlingOrder.size());
     }
 
-    public Ball playBall(int ballId,int matchId, int bowlerId, int battingTeamId, Player striker, Player nonStriker) {
-        return Ball.builder()
-                .ballId(ballId)
-                .bowlerId(bowlerId)
-                .matchId(matchId)
-                .battingTeamId(battingTeamId)
-                .strikerId(striker.getId())
-                .nonStrikerId(nonStriker.getId())
-                .build();
+    public Ball playBall(int ballId, int matchId, int bowlerId, int battingTeamId, Player striker, Player nonStriker) {
+        return Ball.builder().ballId(ballId).bowlerId(bowlerId).matchId(matchId).battingTeamId(battingTeamId).strikerId(striker.getId()).nonStrikerId(nonStriker.getId()).build();
     }
 
     public int generateRandomBallStatus() {

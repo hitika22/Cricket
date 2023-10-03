@@ -5,7 +5,6 @@ import com.cricket.project.model.Player;
 import com.cricket.project.model.PlayerScoreCard;
 import com.cricket.project.service.impl.PlayerServiceImpl;
 import com.cricket.project.service.impl.ScoreCardServiceImpl;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +29,7 @@ public class PlayerController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Player>> getPlayerList() throws PlayerException {
+    public ResponseEntity<List<Player>> getPlayerList() {
         List<Player> players = playerService.getPlayerList();
         return new ResponseEntity<>(players, HttpStatus.OK);
     }
@@ -46,15 +45,13 @@ public class PlayerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> removePlayer(@PathVariable("id") int id) throws PlayerException {
+    public ResponseEntity<String> removePlayer(@PathVariable("id") int id) {
         String result = playerService.removePlayer(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/playerScoreCardForAMatch")
-    public ResponseEntity<PlayerScoreCard> playerScoreCard(
-            @RequestParam("matchId") int matchId,
-            @RequestParam("playerId") int playerId) {
+    @GetMapping
+    public ResponseEntity<PlayerScoreCard> playerScoreCard(@RequestParam("matchId") int matchId, @RequestParam("playerId") int playerId) {
         PlayerScoreCard scoreCard = scoreCardService.playerScoreCard(matchId, playerId);
         return new ResponseEntity<>(scoreCard, HttpStatus.OK);
     }

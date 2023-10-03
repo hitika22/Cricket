@@ -29,10 +29,6 @@ public class MatchController {
     @GetMapping("/{matchId}")
     public ResponseEntity<MatchScoreCard> getMatchScoreCard(@PathVariable int matchId) {
         MatchScoreCard scoreCard = scoreCardService.matchScoreCard(matchId);
-        if (scoreCard != null) {
-            return new ResponseEntity<>(scoreCard, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(scoreCard, HttpStatus.OK);
     }
 }

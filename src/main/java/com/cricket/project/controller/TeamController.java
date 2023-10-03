@@ -1,6 +1,5 @@
 package com.cricket.project.controller;
 
-import com.cricket.project.exception.TeamException;
 import com.cricket.project.model.Team;
 import com.cricket.project.service.impl.TeamServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +17,17 @@ public class TeamController {
     private TeamServiceImpl teamService;
 
     @PostMapping
-    public ResponseEntity<Team> createTeam(@RequestBody Map<String,String> teamName) throws TeamException {
+    public ResponseEntity<Team> createTeam(@RequestBody Map<String, String> teamName) {
         return new ResponseEntity<Team>(teamService.createTeam(teamName), HttpStatus.CREATED);
     }
 
     @PutMapping("/{teamId}/players/{playerId}")
-    public ResponseEntity<Team> addPlayerToTeam(@PathVariable int teamId,@PathVariable int playerId) throws TeamException {
-        return new ResponseEntity<Team>(teamService.addPlayerToTeam(playerId,teamId),HttpStatus.OK);
+    public ResponseEntity<Team> addPlayerToTeam(@PathVariable int teamId, @PathVariable int playerId) {
+        return new ResponseEntity<Team>(teamService.addPlayerToTeam(playerId, teamId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{teamId}/players/{playerId}")
-    public ResponseEntity<Team> removePlayerFromTeam(@PathVariable int teamId,@PathVariable int playerId) throws TeamException {
-        return new ResponseEntity<Team>(teamService.removePlayerFromTeam(playerId,teamId),HttpStatus.OK);
+    public ResponseEntity<Team> removePlayerFromTeam(@PathVariable int teamId, @PathVariable int playerId) {
+        return new ResponseEntity<Team>(teamService.removePlayerFromTeam(playerId, teamId), HttpStatus.OK);
     }
 }

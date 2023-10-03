@@ -7,7 +7,6 @@ import com.cricket.project.model.Team;
 import com.cricket.project.repository.PlayerRepository;
 import com.cricket.project.repository.TeamRepository;
 import com.cricket.project.service.TeamService;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Data
 public class TeamServiceImpl implements TeamService {
 
     @Autowired
@@ -26,9 +24,10 @@ public class TeamServiceImpl implements TeamService {
     private TeamRepository teamRepository;
 
     private Map<Integer, Integer> exist = new HashMap<>();
-    int count=0;
+    int count = 0;
+
     @Override
-    public Team createTeam(Map<String,String> teamName) throws TeamException {
+    public Team createTeam(Map<String, String> teamName) throws TeamException {
         count++;
         if (count >= 3) {
             throw new TeamException("Max 2 teams allowed!");
@@ -44,16 +43,14 @@ public class TeamServiceImpl implements TeamService {
                 .totalMatchesPlayed(0)
                 .build();
 
-        teamRepository.saveTeam(team);
-        return team;
+        return teamRepository.saveTeam(team);
 
     }
 
-    public List<Integer> setPlayersInTeam()
-    {
-        List<Player> bowlers = playerRepository.findPlayersByPlayerType(PlayerType.valueOf("BOWLER"));
-        List<Player> batsmen = playerRepository.findPlayersByPlayerType(PlayerType.valueOf("BATSMAN"));
-        List<Player> allRounders = playerRepository.findPlayersByPlayerType(PlayerType.valueOf("ALLROUNDER"));
+    public List<Integer> setPlayersInTeam() {
+        List<Player> bowlers = playerRepository.findPlayersByPlayerType(PlayerType.BOWLER);
+        List<Player> batsmen = playerRepository.findPlayersByPlayerType(PlayerType.BATSMAN);
+        List<Player> allRounders = playerRepository.findPlayersByPlayerType(PlayerType.ALL_ROUNDER);
         List<Integer> playersInTeam = new ArrayList<>();
 
         int numberOfBowlers = 4;
@@ -67,12 +64,10 @@ public class TeamServiceImpl implements TeamService {
     }
 
     private void setPlayersInTeamByPlayerType(List<Player> players, List<Integer> playersInTeam, int numberOfPlayerType) {
-        for(Player player:players)
-        {
+        for (Player player : players) {
             int allRounderId = player.getId();
-            if(!exist.containsKey(allRounderId) && numberOfPlayerType>0)
-            {
-                exist.put(allRounderId,1);
+            if (!exist.containsKey(allRounderId) && numberOfPlayerType > 0) {
+                exist.put(allRounderId, 1);
                 playersInTeam.add(allRounderId);
                 numberOfPlayerType--;
             }
@@ -83,12 +78,10 @@ public class TeamServiceImpl implements TeamService {
     public Team addPlayerToTeam(int playerId, int teamId) throws TeamException {
         Team team = teamRepository.findTeamById(teamId);
         List<Integer> playerIds = team.getTeamPlayersId();
-        if(playerIds.contains(playerId))
-        {
+        if (playerIds.contains(playerId)) {
             throw new TeamException("Player Already In Team");
         }
-        if(playerIds.size()==11)
-        {
+        if (playerIds.size() == 11) {
             throw new TeamException("Team Already Has 11 Players");
         }
         playerIds.add(playerId);
@@ -96,7 +89,7 @@ public class TeamServiceImpl implements TeamService {
         team.setTeamCaptain(playerRepository.findPlayerById(playerIds.get(0)).getPlayerName());
         teamRepository.saveTeam(team);
         return team;
-     }
+    }
 
     @Override
     public Team removePlayerFromTeam(int playerId, int teamId) throws TeamException {

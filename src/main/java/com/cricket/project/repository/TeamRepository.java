@@ -7,19 +7,19 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TeamRepository{
-    private MongoTemplate mongoTemplate;
+public class TeamRepository {
+    private final MongoTemplate mongoTemplate;
 
-    TeamRepository(MongoTemplate mongoTemplate){
-        this.mongoTemplate=mongoTemplate;
+    TeamRepository(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
     }
 
-    public Team findTeamById(int id)
-    {
+    public Team findTeamById(int id) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(id));
-        return mongoTemplate.findOne(query,Team.class);
+        return mongoTemplate.findOne(query, Team.class);
     }
+
     public Team saveTeam(Team team) {
         return mongoTemplate.save(team);
     }
